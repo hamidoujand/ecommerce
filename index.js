@@ -4,6 +4,10 @@ let mongoose = require("mongoose");
 let path = require("path");
 let envPath = path.join(__dirname, ".env");
 dotenv.config({ path: envPath });
+let errorHandler = require("./controllers/errorController");
+
+let usersRoute = require("./routes/usersRoute");
+let productsRoute = require("./routes/productsRoute");
 
 //****** APP ******* */
 let app = express();
@@ -21,7 +25,17 @@ mongoose
     throw err;
   });
 
+//***************** MIDDLEWARE ***************** */
+app.use(express.json());
+
 //************* API  ************ */
+
+app.use("/api/v1/users", usersRoute);
+
+app.use("/api/v1/products", productsRoute);
+
+//************** GLOBAL ERROR HANDLER *************** */
+app.use(errorHandler);
 
 let PORT = process.env.PORT || 5000;
 
