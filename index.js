@@ -21,8 +21,8 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => console.log("DB in THE HOUSE!"))
-  .catch((err) => {
-    throw err;
+  .catch((error) => {
+    throw error;
   });
 
 //***************** MIDDLEWARE ***************** */
