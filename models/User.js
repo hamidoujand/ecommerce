@@ -68,6 +68,15 @@ userSchema.methods.isPasswordMatch = async function (hashPass, rawPass) {
   return await bcrypt.compare(rawPass, hashPass);
 };
 
+//**************************** INSTANCE METHOD FOR CHECKING RECENTLY PASSWORD CHANGED  ********************************************* */
+
+userSchema.methods.isPasswordRecentlyChanged = function (jwtInitialDate) {
+  if (!this.passwordChangedAt) {
+    return false;
+  }
+  return this.passwordChangedAt.getTime() / 1000 > jwtInitialDate;
+};
+
 let User = mongoose.model("User", userSchema);
 
 module.exports = User;
