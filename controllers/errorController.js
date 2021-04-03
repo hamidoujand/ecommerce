@@ -8,12 +8,11 @@ let handleMongooseValidation = (err) => {
 };
 
 module.exports = (err, req, res, next) => {
-  let statusCode = err.statusCode || 500;
-  let status = err.status || "error";
-
   if (err.name === "ValidationError") {
     err = handleMongooseValidation(err);
   }
+  let statusCode = err.statusCode || 500;
+  let status = err.status || "error";
 
   let resData = {
     status,
