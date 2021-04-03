@@ -4,13 +4,13 @@ let usersController = require("../controllers/userController");
 let restrictTo = require("../utils/restrictTo");
 
 router
-  .route("/")
-  .post(
-    usersController.isAuthenticated,
-    productController.upload.single("image"),
-    productController.resizeImages,
-    restrictTo("admin"),
-    productController.createProduct
-  );
+    .route("/")
+    .post(
+        usersController.isAuthenticated,
+        productController.upload.single("image"),
+        productController.resizeImages,
+        restrictTo("admin"),
+        productController.createProduct
+    ).get(productController.getAllProducts)
 
 module.exports = router;
