@@ -7,6 +7,8 @@ router
   .route("/")
   .post(
     usersController.isAuthenticated,
+    productController.upload.single("image"),
+    productController.resizeImages,
     restrictTo("admin"),
     productController.createProduct
   );
