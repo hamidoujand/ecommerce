@@ -41,11 +41,19 @@ exports.isAuthenticated = catchAsync(async (req, res, next) => {
     return next(new AppError("please login to get access", 401));
   }
 
-  let { _id } = jwt.verify(token, process.env.JWT_SECRET);
+  let { _id, iat } = jwt.verify(token, process.env.JWT_SECRET);
   let user = await User.findById(_id);
   if (!user) {
     return next(
       new AppError("no user related to this token please signup", 401)
     );
   }
+  //here we check if user recently changed his password
+  let isPassRecentlyChanged = user.isPasswordRecentlyChanged(iat);
+  if (isPassRecentlyChanged) {
+    return next(new AppError("password recently changed please login again"));
+  }
+  //here we good to go and put the user in request
+  req.user = user;
+  next();
 });
