@@ -51,9 +51,28 @@ exports.isAuthenticated = catchAsync(async (req, res, next) => {
   //here we check if user recently changed his password
   let isPassRecentlyChanged = user.isPasswordRecentlyChanged(iat);
   if (isPassRecentlyChanged) {
-    return next(new AppError("password recently changed please login again"));
+    return next(
+      new AppError("password recently changed please login again", 401)
+    );
   }
   //here we good to go and put the user in request
   req.user = user;
   next();
+});
+
+exports.changePassword = catchAsync(async (req, res, next) => {
+  let { password, newPassword, newPasswordConfirm } = req.body;
+  //get the user from db
+  let user = await User.findOne({ _id: req.user._id }).select("+password");
+  //now we compare the hashed version of the pass user sent with what actually is in DB
+  let isPasswordMatch = await user.isPasswordMatch(user.password, password);
+  if (!isPasswordMatch) {
+    return next(new AppError("invalid password", 400));
+  }
+  //here we change the password
+  user.password = newPassword;
+  user.passwordConfirm = newPasswordConfirm;
+  await user.save();
+  //login the user
+  sendJwt(user, res, 200);
 });
