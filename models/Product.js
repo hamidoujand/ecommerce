@@ -15,7 +15,7 @@ let productSchema = new Schema({
   price: {
     type: Number,
     required: [true, "price is required"],
-    min: 0,
+    min: [0, "price can not be lower than 0"],
   },
   quantity: {
     type: Number,
