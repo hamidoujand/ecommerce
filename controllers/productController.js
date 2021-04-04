@@ -4,6 +4,7 @@ let multer = require("multer");
 const AppError = require("../utils/AppError");
 let sharp = require("sharp");
 let path = require("path");
+let deletePhoto = require("../utils/deletePhoto");
 
 let multerStorage = multer.memoryStorage();
 
@@ -53,5 +54,30 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: "success",
     product: product,
+  });
+});
+
+exports.updateProduct = catchAsync(async (req, res, next) => {
+  let data = { ...req.body };
+  let product = await Product.findById(req.params.productId);
+  if (!product)
+    return next(new AppError("there is no product with this id", 404));
+
+  if (req.filename) {
+    data.image = req.filename;
+    await deletePhoto(product.image);
+  }
+  let updatedProduct = await Product.findOneAndUpdate(
+    { _id: product._id },
+    data,
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  res.json({
+    status: "success",
+    product: updatedProduct,
   });
 });

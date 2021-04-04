@@ -20,6 +20,13 @@ router
     usersController.isAuthenticated,
     restrictTo("admin"),
     productController.deleteProduct
+  )
+  .patch(
+    usersController.isAuthenticated,
+    restrictTo("admin"),
+    productController.upload.single("image"),
+    productController.resizeImages,
+    productController.updateProduct
   );
 
 module.exports = router;
