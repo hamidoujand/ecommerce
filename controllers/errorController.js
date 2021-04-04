@@ -7,9 +7,16 @@ let handleMongooseValidation = (err) => {
   return new AppError(message, 400);
 };
 
+let handleInvalidMongoId = (e) => {
+  return new AppError("Invalid Id", 404);
+};
+
 module.exports = (err, req, res, next) => {
   if (err.name === "ValidationError") {
     err = handleMongooseValidation(err);
+  }
+  if (err.name === "CastError") {
+    err = handleInvalidMongoId(err);
   }
   let statusCode = err.statusCode || 500;
   let status = err.status || "error";
