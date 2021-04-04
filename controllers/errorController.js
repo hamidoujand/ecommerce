@@ -20,6 +20,9 @@ let handleInvalidJwt = () => {
   return new AppError("invalid token", 400);
 };
 
+let handleTokenExpired = () =>
+  new AppError("token is expired please login again", 400);
+
 module.exports = (err, req, res, next) => {
   if (err.name === "ValidationError") {
     err = handleMongooseValidation(err);
@@ -32,6 +35,10 @@ module.exports = (err, req, res, next) => {
   }
   if (err.name === "JsonWebTokenError") {
     err = handleInvalidJwt();
+  }
+
+  if (err.name === "TokenExpiredError") {
+    err = handleTokenExpired();
   }
   let statusCode = err.statusCode || 500;
   let status = err.status || "error";
