@@ -7,7 +7,7 @@ let handleMongooseValidation = (err) => {
   return new AppError(message, 400);
 };
 
-let handleInvalidMongoId = (e) => {
+let handleInvalidMongoId = () => {
   return new AppError("Invalid Id", 404);
 };
 
@@ -15,15 +15,23 @@ let handleDuplicatedField = (e) => {
   let duplicatedValue = e.message.match(/(["'])(?:(?=(\\?))\2.)*?\1/)[0];
   return new AppError(`value "${duplicatedValue}" already exists`, 400);
 };
+
+let handleInvalidJwt = () => {
+  return new AppError("invalid token", 400);
+};
+
 module.exports = (err, req, res, next) => {
   if (err.name === "ValidationError") {
     err = handleMongooseValidation(err);
   }
   if (err.name === "CastError") {
-    err = handleInvalidMongoId(err);
+    err = handleInvalidMongoId();
   }
   if (err.code === 11000) {
     err = handleDuplicatedField(err);
+  }
+  if (err.name === "JsonWebTokenError") {
+    err = handleInvalidJwt();
   }
   let statusCode = err.statusCode || 500;
   let status = err.status || "error";
