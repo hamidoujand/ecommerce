@@ -4,6 +4,9 @@ let mongoose = require("mongoose");
 let path = require("path");
 let envPath = path.join(__dirname, ".env");
 dotenv.config({ path: envPath });
+let session = require("express-session");
+let MongoStore = require("connect-mongo");
+
 let errorHandler = require("./controllers/errorController");
 
 let usersRoute = require("./routes/usersRoute");
@@ -27,7 +30,26 @@ mongoose
 
 //***************** MIDDLEWARE ***************** */
 app.use(express.json());
+
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl: process.env.DB_URI,
+    }),
+    cookie: {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production" && true,
+      expires: new Date(
+        Date.now() + process.env.SESSION_EXPIRES_IN * 24 * 60 * 60 * 1000
+      ),
+    },
+    saveUninitialized: false,
+    resave: false,
+    secret: process.env.SESSION_SECRET,
+  })
+);
 
 //************* API  ************ */
 
