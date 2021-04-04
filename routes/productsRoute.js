@@ -27,6 +27,11 @@ router
     productController.upload.single("image"),
     productController.resizeImages,
     productController.updateProduct
+  )
+  .delete(
+    usersController.isAuthenticated,
+    restrictTo("admin"),
+    productController.deleteProduct
   );
 
 module.exports = router;

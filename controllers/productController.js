@@ -81,3 +81,12 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
     product: updatedProduct,
   });
 });
+
+exports.deleteProduct = catchAsync(async (req, res, next) => {
+  let product = await Product.findById(req.params.productId);
+  if (!product) return next(new AppError("product not found", 404));
+  //delete the photo
+  await deletePhoto(product.image);
+  await product.delete();
+  res.status(204).json({ status: "success" });
+});
