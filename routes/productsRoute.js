@@ -36,5 +36,5 @@ router
   .get(productController.getSingleProduct);
 
 router.get("/add-to-cart/:productId", productController.addToCart);
-
+router.get("/remove-from-cart/:productId", productController.removeFromCart);
 module.exports = router;
