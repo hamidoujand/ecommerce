@@ -2,10 +2,6 @@ let router = require("express").Router();
 let productController = require("../controllers/productController");
 let usersController = require("../controllers/userController");
 let restrictTo = require("../utils/restrictTo");
-let cardRouter = require("./cartsRoute");
-
-//Cart Router
-router.use("/:productId/add-to-cart", cardRouter);
 
 router
   .route("/")
@@ -38,5 +34,7 @@ router
     productController.deleteProduct
   )
   .get(productController.getSingleProduct);
+
+router.get("/add-to-cart/:productId", productController.addToCart);
 
 module.exports = router;

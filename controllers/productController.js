@@ -5,6 +5,7 @@ const AppError = require("../utils/AppError");
 let sharp = require("sharp");
 let path = require("path");
 let deletePhoto = require("../utils/deletePhoto");
+let Cart = require("../models/Cart");
 
 let multerStorage = multer.memoryStorage();
 
@@ -97,5 +98,20 @@ exports.getSingleProduct = catchAsync(async (req, res, next) => {
   res.json({
     status: "success",
     product,
+  });
+});
+
+exports.addToCart = catchAsync(async (req, res, next) => {
+  let product = await Product.findById(req.params.productId);
+  // first we check it we have the product in stock
+  if (!product) return next(new AppError("product not found", 404));
+  if (product.quantity === 0) return next(new AppError("sold out", 404));
+  //here we create a cart obj for this person
+  let cart = new Cart(req.session.cart);
+  cart.addToCard(product);
+  req.session.cart = cart;
+  res.json({
+    status: "success",
+    cart,
   });
 });

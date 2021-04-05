@@ -1,16 +1,25 @@
-let mongoose = require("mongoose");
-let Schema = mongoose.Schema;
+let { Types } = require("mongoose");
 
-let cartSchema = new Schema({
-  products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: [true, "user is required"],
-  },
-  totalPrice: { type: Number, min: [0, "price can not go below 0"] },
-});
+module.exports = class Cart {
+  constructor(previousCard = {}) {
+    this.products = previousCard.products ? [...previousCard.products] : [];
+    this.totalPrice = previousCard.totalPrice ? previousCard.totalPrice : 0;
+  }
 
-let Cart = mongoose.model("Cart", cartSchema);
-
-module.exports = Cart;
+  addToCard(product) {
+    product = product.toObject();
+    let founded = this.products.find((prod) => prod.name === product.name);
+    if (founded) {
+      founded.cartQuantity++;
+    } else {
+      product.cartQuantity = 1;
+      this.products.push(product);
+    }
+    //***************** Aggregate the total price ********************/
+    let totalPrice = this.products.reduce(
+      (total, prod) => (total += prod.price * prod.cartQuantity),
+      0
+    );
+    this.totalPrice = totalPrice;
+  }
+};
