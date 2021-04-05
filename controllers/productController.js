@@ -90,3 +90,12 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
   await product.delete();
   res.status(204).json({ status: "success" });
 });
+
+exports.getSingleProduct = catchAsync(async (req, res, next) => {
+  let product = await Product.findById(req.params.productId);
+  if (!product) return next(new AppError("product not found", 404));
+  res.json({
+    status: "success",
+    product,
+  });
+});
