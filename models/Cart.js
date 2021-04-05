@@ -16,7 +16,21 @@ module.exports = class Cart {
       product.cartQuantity = 1;
       this.products.push(product);
     }
-    //***************** Aggregate the total price ********************/
+    this.calculateTotalPrice();
+  }
+  removeFromCart(name) {
+    let product = this.products.find((prod) => prod.name === name);
+    if (!product) return;
+    if (product.cartQuantity > 0) {
+      product.cartQuantity--;
+    }
+    if (product.cartQuantity === 0) {
+      this.products = this.products.filter((prod) => prod.name !== name);
+    }
+
+    this.calculateTotalPrice();
+  }
+  calculateTotalPrice() {
     let totalPrice = this.products.reduce(
       (total, prod) => (total += prod.price * prod.cartQuantity),
       0

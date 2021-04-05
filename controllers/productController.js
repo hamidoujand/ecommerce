@@ -116,3 +116,17 @@ exports.addToCart = catchAsync(async (req, res, next) => {
     cart,
   });
 });
+
+exports.removeFromCart = catchAsync(async (req, res, next) => {
+  let productId = req.params.productId;
+  let product = await Product.findById(productId);
+  if (!product) return next(new AppError("product not found", 404));
+  let cart = new Cart(req.session.cart);
+  cart.removeFromCart(product.name);
+  req.session.cart = cart;
+  await product.updateOne({ $inc: { quantity: 1 } });
+  res.json({
+    status: "success",
+    cart,
+  });
+});
