@@ -110,6 +110,7 @@ exports.addToCart = catchAsync(async (req, res, next) => {
   let cart = new Cart(req.session.cart);
   cart.addToCard(product);
   req.session.cart = cart;
+  await product.updateOne({ $inc: { quantity: -1 } });
   res.json({
     status: "success",
     cart,

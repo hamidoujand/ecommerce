@@ -8,6 +8,7 @@ module.exports = class Cart {
 
   addToCard(product) {
     product = product.toObject();
+    product.quantity = undefined;
     let founded = this.products.find((prod) => prod.name === product.name);
     if (founded) {
       founded.cartQuantity++;
