@@ -6,6 +6,7 @@ let sharp = require("sharp");
 let path = require("path");
 let deletePhoto = require("../utils/deletePhoto");
 let Cart = require("../models/Cart");
+let ApiFeatures = require("../utils/ApiFeatures");
 
 let multerStorage = multer.memoryStorage();
 
@@ -38,7 +39,11 @@ exports.createProduct = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllProducts = catchAsync(async (req, res, next) => {
-  let products = await Product.find();
+  let queryString = req.query;
+  let mongoQuery = Product.find();
+  let api = new ApiFeatures(mongoQuery, queryString);
+  let query = api.filter().mongoQuery;
+  let products = await query;
   res.status(200).json({
     status: "success",
     result: products.length,
