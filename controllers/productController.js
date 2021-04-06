@@ -7,6 +7,7 @@ let path = require("path");
 let deletePhoto = require("../utils/deletePhoto");
 let Cart = require("../models/Cart");
 let ApiFeatures = require("../utils/ApiFeatures");
+let stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 let multerStorage = multer.memoryStorage();
 
@@ -133,5 +134,28 @@ exports.removeFromCart = catchAsync(async (req, res, next) => {
   res.json({
     status: "success",
     cart,
+  });
+});
+
+exports.getCheckoutSession = catchAsync(async (req, res, next) => {
+  let cart = req.session.cart;
+  let session = await stripe.checkout.sessions.create({
+    payment_method_types: ["card"],
+    success_url: `${req.protocol}://${req.get("host")}/`,
+    cancel_url: `${req.protocol}://${req.get("host")}/`,
+    customer_email: req.user.email,
+    client_reference_id: req.user._id.toString(),
+    line_items: [
+      {
+        name: "EC",
+        amount: cart.totalPrice * 100,
+        currency: "usd",
+        quantity: req.session.cart.products.length,
+      },
+    ],
+  });
+  res.status(200).json({
+    status: "success",
+    session,
   });
 });

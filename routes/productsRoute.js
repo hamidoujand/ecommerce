@@ -13,7 +13,11 @@ router
     productController.createProduct
   )
   .get(productController.getAllProducts);
-
+router.get(
+  "/checkout",
+  usersController.isAuthenticated,
+  productController.getCheckoutSession
+);
 router
   .route("/:productId")
   .delete(
@@ -37,4 +41,5 @@ router
 
 router.get("/add-to-cart/:productId", productController.addToCart);
 router.get("/remove-from-cart/:productId", productController.removeFromCart);
+
 module.exports = router;
