@@ -15,6 +15,8 @@ let productsRoute = require("./routes/productsRoute");
 //****** APP ******* */
 let app = express();
 
+app.enable("trust proxy");
+
 //****** DB CONNECTION ******** */
 mongoose
   .connect(process.env.DB_URI, {

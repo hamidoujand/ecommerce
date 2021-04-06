@@ -12,7 +12,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password,
     passwordConfirm,
   });
-  sendJwt(user, res, 201);
+  sendJwt(user, req, res, 201);
 });
 
 exports.signin = catchAsync(async (req, res, next) => {
@@ -25,7 +25,7 @@ exports.signin = catchAsync(async (req, res, next) => {
   if (!isMatch) {
     return next(new AppError("invalid email or password", 400));
   }
-  sendJwt(user, res, 200);
+  sendJwt(user, req, res, 200);
 });
 
 exports.isAuthenticated = catchAsync(async (req, res, next) => {
@@ -74,5 +74,5 @@ exports.changePassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = newPasswordConfirm;
   await user.save();
   //login the user
-  sendJwt(user, res, 200);
+  sendJwt(user, req, res, 200);
 });
