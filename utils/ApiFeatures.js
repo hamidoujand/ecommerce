@@ -33,4 +33,15 @@ module.exports = class ApiFeatures {
     }
     return this;
   }
+  paginate() {
+    if (this.queryString.page) {
+      let page = this.queryString.page * 1;
+      let limit = this.queryString.limit * 1;
+      let skip = (page - 1) * limit;
+      this.mongoQuery.skip(skip).limit(limit);
+    } else {
+      this.mongoQuery.skip(0).limit(9);
+    }
+    return this;
+  }
 };
