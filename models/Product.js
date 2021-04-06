@@ -26,6 +26,10 @@ let productSchema = new Schema({
     type: String,
     required: [true, "image is required"],
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 let Product = mongoose.model("Product", productSchema);
