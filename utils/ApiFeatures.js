@@ -22,4 +22,15 @@ module.exports = class ApiFeatures {
     this.mongoQuery.find(filterObject);
     return this;
   }
+  sort() {
+    if (this.queryString.sort) {
+      //here we sort based on that
+      let sortString = this.queryString.sort.split(",").join(" ");
+      this.mongoQuery.sort(sortString);
+    } else {
+      //we sort based on createdAt field
+      this.mongoQuery.sort("-createdAt");
+    }
+    return this;
+  }
 };

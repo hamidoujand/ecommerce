@@ -42,7 +42,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   let queryString = req.query;
   let mongoQuery = Product.find();
   let api = new ApiFeatures(mongoQuery, queryString);
-  let query = api.filter().mongoQuery;
+  let query = api.filter().sort().mongoQuery;
   let products = await query;
   res.status(200).json({
     status: "success",
