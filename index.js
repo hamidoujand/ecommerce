@@ -6,6 +6,7 @@ let envPath = path.join(__dirname, ".env");
 dotenv.config({ path: envPath });
 let session = require("express-session");
 let MongoStore = require("connect-mongo");
+let cookieParser = require("cookie-parser");
 
 let errorHandler = require("./controllers/errorController");
 
@@ -52,6 +53,8 @@ app.use(
     secret: process.env.SESSION_SECRET,
   })
 );
+
+app.use(cookieParser());
 
 //************* API  ************ */
 
